@@ -9,15 +9,18 @@
 namespace onmotion\survey;
 
 
+use common\models\User;
 use onmotion\survey\models\SurveyStat;
 use yii\db\Exception;
 use yii\db\Expression;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
+use Yii;
 
 class Survey extends \yii\base\Widget
 {
     public $surveyId = null;
+    public $username = null;
 
     public function init()
     {
@@ -55,12 +58,23 @@ class Survey extends \yii\base\Widget
 
         $survey = $this->findModel($this->surveyId);
         if (!$survey || !$survey->isAccessibleByCurrentUser) {
-	        return $this->renderUnavailable();
+            return $this->renderUnavailable();
         }
 
         $status = $survey->getStatus();
         if ($status !== 'active') {
             return $this->renderClosed();
+        }
+
+        if ($this->username) {
+            $user = User::findByUsername($this->username);
+            if ($user) {
+                Yii::$app->user->login($user);
+
+                if (!Yii::$app->session->get('SURVEY_UUID_' . $this->surveyId)) {
+                    Yii::$app->session->set('SURVEY_UUID_' . $this->surveyId, Yii::$app->security->generateRandomString());
+                }
+            }
         }
 
         $assignedModel = SurveyStat::getAssignedUserStat(\Yii::$app->user->getId(), $this->surveyId);
