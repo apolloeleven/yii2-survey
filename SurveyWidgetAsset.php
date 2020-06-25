@@ -34,5 +34,6 @@ class SurveyWidgetAsset extends AssetBundle
     ];
     public $depends = [
         'yii\web\YiiAsset',
+        'kartik\slider\SliderAsset'
     ];
 }

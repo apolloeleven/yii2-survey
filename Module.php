@@ -2,6 +2,7 @@
 
 namespace onmotion\survey;
 
+use yii\base\InvalidConfigException;
 use yii\base\UserException;
 use yii\helpers\FileHelper;
 use yii\helpers\Url;
@@ -21,6 +22,7 @@ class Module extends \yii\base\Module
     public $params = [
         'uploadsUrl' => null,
         'uploadsPath' => null,
+        'singleUserMode' => false,
     ];
 
     /**
@@ -38,15 +40,31 @@ class Module extends \yii\base\Module
         parent::init();
 
         if (empty($this->params['uploadsUrl'])) {
-            throw new UserException("You must set uploadsUrl param in the config. Please see the documentation for more information.");
+            throw new InvalidConfigException("You must set uploadsUrl param in the config. Please see the documentation for more information.");
         } else {
             $this->params['uploadsUrl'] = rtrim($this->params['uploadsUrl'], '/');
         }
         if (empty($this->params['uploadsPath'])) {
-            throw new UserException("You must set uploadsPath param in the config. Please see the documentation for more information.");
+            throw new InvalidConfigException("You must set uploadsPath param in the config. Please see the documentation for more information.");
         } else {
             $this->params['uploadsPath'] = FileHelper::normalizePath($this->params['uploadsPath']);
         }
+
+        if (empty($this->params['singleUserMode'])) {
+            $this->params['singleUserMode'] = false;
+        }
+
+        if (!is_bool($this->params['singleUserMode'])) {
+            throw new InvalidConfigException("singleUserMode param must be a boolean");
+        }
+
+//        if ($this->params['singleUserMode'] && !isset($this->params['surveyUserName'])) {
+//            throw new InvalidConfigException("You must must provide surveyUserName param when singleUserMode is set to true");
+//        }
+//
+//        if($this->params['singleUserMode'] && !is_string($this->params['surveyUserName'])) {
+//            throw new InvalidConfigException("surveyUserName param must be a string");
+//        }
 
         $this->userClass = \Yii::$app->user->identityClass;
 

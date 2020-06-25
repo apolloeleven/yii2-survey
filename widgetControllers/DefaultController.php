@@ -9,6 +9,7 @@ use onmotion\survey\models\SurveyAnswer;
 use onmotion\survey\models\SurveyQuestion;
 use onmotion\survey\models\SurveyStat;
 use onmotion\survey\models\SurveyType;
+use onmotion\survey\Module;
 use onmotion\survey\SurveyInterface;
 use onmotion\survey\User;
 use yii\base\Model;
@@ -79,16 +80,33 @@ class DefaultController extends Controller
 
     public function actionDone()
     {
+        $allowMultipleTimes = isset($this->module->params['singleUserMode']) ? $this->module->params['singleUserMode'] : false;
+
         $id = \Yii::$app->request->post('id');
         if ($id < 0) {
             throw new UserException('Wrong survey id defined');
         }
         $survey = $this->findModel($id);
-        $stat = SurveyStat::findOne(['survey_stat_survey_id' => $id, 'survey_stat_user_id' => \Yii::$app->user->getId()]);
+
+        $statQuery = SurveyStat::find()
+        ->andWhere([
+            'survey_stat_survey_id' => $id,
+            'survey_stat_user_id' => \Yii::$app->user->getId()
+        ]);
+
+        if($allowMultipleTimes) {
+            $statQuery->andWhere([
+            'uuid' => \Yii::$app->session->get('SURVEY_UUID_' . $id)
+            ]);
+        }
+
+        $stat = $statQuery->one();
         if ($stat === null) {
             throw new UserException('The requested survey stat does not exist.');
-        } elseif ($stat->survey_stat_is_done) {
-            throw new UserException('The survey has already been completed.');
+        } else {
+            if($stat->survey_stat_is_done) {
+                throw new UserException('The survey has already been completed.');
+            }
         }
         foreach ($survey->questions as $question) {
             if (!$this->validateQuestion($question)) {
@@ -105,7 +123,7 @@ class DefaultController extends Controller
             'title' => '<div class="text-center"><h2>' . \Yii::t('survey', 'Thank you!'),
             'content' => $this->renderPartial('@surveyRoot/views/widget/default/success', ['survey' => $survey]),
             'footer' =>
-              Html::button('Ok', ['class' => 'btn btn-default pull-left', 'data-dismiss' => "modal"]) 
+              Html::button('Ok', ['class' => 'btn btn-default pull-left', 'data-dismiss' => "modal"])
         ];
     }
 

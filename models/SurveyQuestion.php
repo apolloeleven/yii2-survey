@@ -170,7 +170,9 @@ class SurveyQuestion extends \yii\db\ActiveRecord
     public function getUserAnswers()
     {
         return $this->hasMany(SurveyUserAnswer::class, ['survey_user_answer_question_id' => 'survey_question_id'])
-            ->andOnCondition(['survey_user_answer_user_id' => \Yii::$app->user->getId()])
+            ->andOnCondition([
+                'survey_user_answer_user_id' => \Yii::$app->user->getId(),
+                'uuid' => \Yii::$app->session->get('SURVEY_UUID_' . $this->survey_question_survey_id)])
             ->indexBy('survey_user_answer_answer_id');
     }
 

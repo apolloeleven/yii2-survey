@@ -42,8 +42,9 @@ class SurveyStat extends \yii\db\ActiveRecord
 
     public function beforeSave($insert)
     {
-        if ($insert){
-            $this->survey_stat_hash = self::generateHash($this->survey_stat_survey_id, $this->survey_stat_user_id);
+        if ($insert) {
+//            $this->survey_stat_hash = self::generateHash($this->survey_stat_survey_id, $this->survey_stat_user_id);
+            $this->survey_stat_hash = Yii::$app->security->generateRandomString();
         }
         return parent::beforeSave($insert);
     }
@@ -51,11 +52,11 @@ class SurveyStat extends \yii\db\ActiveRecord
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
-        if ($insert){
+        if ($insert) {
             \Yii::$app->trigger(self::EVENT_SURVEY_HAS_BEEN_ASSIGN, new Event(['sender' => $this]));
         }
 
-        if (isset($changedAttributes['survey_stat_is_done']) && $changedAttributes['survey_stat_is_done'] === false){
+        if (isset($changedAttributes['survey_stat_is_done']) && $changedAttributes['survey_stat_is_done'] === false) {
             Event::trigger(self::class, self::EVENT_SURVEY_AFTER_COMPLETE, new Event(['sender' => $this]));
             \Yii::$app->trigger(self::EVENT_SURVEY_AFTER_COMPLETE, new Event(['sender' => $this]));
         }
@@ -66,7 +67,8 @@ class SurveyStat extends \yii\db\ActiveRecord
      * @param $survey_stat_user_id
      * @return string
      */
-    static function generateHash($survey_stat_survey_id, $survey_stat_user_id){
+    static function generateHash($survey_stat_survey_id, $survey_stat_user_id)
+    {
         return md5($survey_stat_survey_id . $survey_stat_user_id);
     }
 
@@ -145,7 +147,8 @@ class SurveyStat extends \yii\db\ActiveRecord
      * @return bool
      * @throws UserException
      */
-    static function assignUser($userId, $surveyId){
+    static function assignUser($userId, $surveyId)
+    {
 
         $user = Survey::findOne($surveyId);
         if (!$user) {
@@ -159,24 +162,26 @@ class SurveyStat extends \yii\db\ActiveRecord
             throw new UserException('user does not exist');
         }
 
-        $isAssigned = SurveyStat::find()->where(['survey_stat_survey_id' => $surveyId])
-            ->andWhere(['survey_stat_user_id' => $userId])->count();
-        if ($isAssigned){
-            throw new UserException('user already assigned', 1001);
-        }
+//        $isAssigned = SurveyStat::find()->where(['survey_stat_survey_id' => $surveyId])
+//            ->andWhere(['survey_stat_user_id' => $userId])->count();
+//        if ($isAssigned){
+//            throw new UserException('user already assigned', 1001);
+//        }
 
         $surveyStat = new SurveyStat();
         $surveyStat->survey_stat_user_id = $userId;
         $surveyStat->survey_stat_survey_id = $surveyId;
-        if ($surveyStat->save(false)){
+        $surveyStat->uuid = Yii::$app->session->get('SURVEY_UUID_' . $surveyId);
+        if ($surveyStat->save(false)) {
 
             return true;
-        }else {
+        } else {
             return false;
         }
     }
 
-    static function unassignUser($userId, $surveyId){
+    static function unassignUser($userId, $surveyId)
+    {
 
         $user = Survey::findOne($surveyId);
         if (!$user) {
@@ -199,8 +204,8 @@ class SurveyStat extends \yii\db\ActiveRecord
      * @return array|null|SurveyStat
      * @throws UserException
      */
-    static function getAssignedUserStat($userId, $surveyId){
-
+    static function getAssignedUserStat($userId, $surveyId)
+    {
         $user = Survey::findOne($surveyId);
         if (!$user) {
             throw new UserException('survey does not exist');
@@ -213,8 +218,11 @@ class SurveyStat extends \yii\db\ActiveRecord
             throw new UserException('user does not exist');
         }
 
-        $result = SurveyStat::find()->where(['survey_stat_survey_id' => $surveyId])
-            ->andWhere(['survey_stat_user_id' => $userId])->one();
+        $result = SurveyStat::find()
+            ->where(['survey_stat_survey_id' => $surveyId])
+            ->andWhere(['survey_stat_user_id' => $userId])
+            ->andWhere(['uuid' => \Yii::$app->session->get('SURVEY_UUID_' . $surveyId)])
+            ->one();
 
         return $result;
     }

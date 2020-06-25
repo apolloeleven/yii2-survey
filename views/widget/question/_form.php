@@ -23,6 +23,10 @@ use yii\widgets\Pjax;
 /* @var $number integer */
 /* @var $readonly boolean */
 
+if(!isset($readonly)) {
+    $readonly = true;
+}
+
 Pjax::begin([
     'id' => 'survey-questions-pjax-' . $question->survey_question_id,
     'enablePushState' => false,

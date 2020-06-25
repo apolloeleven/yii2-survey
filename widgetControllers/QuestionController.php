@@ -26,14 +26,12 @@ use yii\web\Response;
  */
 class QuestionController extends Controller
 {
-
     /**
      * @param $question SurveyQuestion
      * @return array|bool
      */
     protected function validate(&$question)
     {
-
         $stat = SurveyStat::getAssignedUserStat(\Yii::$app->user->getId(), $question->survey->survey_id);
         //не работаем с завершенными опросами
         if ($stat->survey_stat_is_done) {
