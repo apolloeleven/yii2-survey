@@ -32,6 +32,18 @@ class Survey extends \yii\base\Widget
 
         \Yii::setAlias('@surveyRoot', __DIR__);
 
+        if ($this->username) {
+            $user = \Yii::$app->user->identityClass::findByUsername($this->username);
+            if (!$user) {
+                throw new \yii\base\Exception(\Yii::t('survey', 'Survey user was not found. check "username" param'));
+            }
+            \Yii::$app->user->login($user);
+
+            if (!\Yii::$app->session->get('SURVEY_UUID_' . $this->surveyId)) {
+                \Yii::$app->session->set('SURVEY_UUID_' . $this->surveyId, \Yii::$app->security->generateRandomString());
+            }
+        }
+
         parent::init();
     }
 
@@ -64,18 +76,6 @@ class Survey extends \yii\base\Widget
             return $this->renderClosed();
         }
 
-        if ($this->username) {
-            $user = \Yii::$app->user->getIdentity()::findByUsername($this->username);
-            if (!$user) {
-                throw new \yii\base\Exception(\Yii::t('survey', 'Survey user was not found. check "username" param'));
-            }
-            \Yii::$app->user->login($user);
-
-            if (!\Yii::$app->session->get('SURVEY_UUID_' . $this->surveyId)) {
-                \Yii::$app->session->set('SURVEY_UUID_' . $this->surveyId, \Yii::$app->security->generateRandomString());
-            }
-        }
-
         $assignedModel = SurveyStat::getAssignedUserStat(\Yii::$app->user->getId(), $this->surveyId);
         if (empty($assignedModel)) {
             SurveyStat::assignUser(\Yii::$app->user->getId(), $this->surveyId);
@@ -85,7 +85,6 @@ class Survey extends \yii\base\Widget
 //                return $this->renderClosed();
 //            }
         }
-
 
         if ($assignedModel->survey_stat_started_at === null) {
             $assignedModel->survey_stat_started_at = new Expression('NOW()');
