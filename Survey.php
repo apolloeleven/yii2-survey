@@ -9,13 +9,11 @@
 namespace onmotion\survey;
 
 
-use common\models\User;
 use onmotion\survey\models\SurveyStat;
 use yii\db\Exception;
 use yii\db\Expression;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
-use Yii;
 
 class Survey extends \yii\base\Widget
 {
@@ -67,13 +65,14 @@ class Survey extends \yii\base\Widget
         }
 
         if ($this->username) {
-            $user = User::findByUsername($this->username);
-            if ($user) {
-                Yii::$app->user->login($user);
+            $user = \Yii::$app->user->getIdentity()::findByUsername($this->username);
+            if (!$user) {
+                throw new \yii\base\Exception(\Yii::t('survey', 'Survey user was not found. check "username" param'));
+            }
+            \Yii::$app->user->login($user);
 
-                if (!Yii::$app->session->get('SURVEY_UUID_' . $this->surveyId)) {
-                    Yii::$app->session->set('SURVEY_UUID_' . $this->surveyId, Yii::$app->security->generateRandomString());
-                }
+            if (!\Yii::$app->session->get('SURVEY_UUID_' . $this->surveyId)) {
+                \Yii::$app->session->set('SURVEY_UUID_' . $this->surveyId, \Yii::$app->security->generateRandomString());
             }
         }
 
