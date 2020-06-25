@@ -62,7 +62,8 @@ class QuestionController extends Controller
                         'survey_user_answer_user_id' => \Yii::$app->user->getId(),
                         'survey_user_answer_survey_id' => $question->survey_question_survey_id,
                         'survey_user_answer_question_id' => $question->survey_question_id,
-                        'survey_user_answer_answer_id' => $answer->survey_answer_id
+                        'survey_user_answer_answer_id' => $answer->survey_answer_id,
+                        'survey_user_answer_survey_stat_id' => $stat->survey_stat_id
                     ]));
                     if ($userAnswer->load($answersData[$answer->survey_answer_id], '')) {
                         $userAnswer->validate();
@@ -89,6 +90,7 @@ class QuestionController extends Controller
                     'survey_user_answer_user_id' => \Yii::$app->user->getId(),
                     'survey_user_answer_survey_id' => $question->survey_question_survey_id,
                     'survey_user_answer_question_id' => $question->survey_question_id,
+                    'survey_user_answer_survey_stat_id' => $stat->survey_stat_id
                 ]));
                 if ($userAnswer->load($answersData, '')) {
                     $userAnswer->validate();
