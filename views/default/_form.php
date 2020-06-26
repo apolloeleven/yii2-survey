@@ -167,6 +167,12 @@ echo Dialog::widget();
             echo Html::beginTag('div', ['class' => 'col-md-12']);
             echo $form->field($survey, "survey_descr", ['template' => "<div class='survey-form-field'>{label}{input}</div>",]
             )->textarea(['rows' => 3]);
+            echo $form->field($survey, "survey_message_completed", ['template' => "<div class='survey-form-field'>{label}{input}</div>",]
+            )->textarea(['rows' => 3, 'placeholder' => 'Thank you for participating in the survey.']);
+            echo $form->field($survey, "survey_message_closed", ['template' => "<div class='survey-form-field'>{label}{input}</div>",]
+            )->textarea(['rows' => 3, 'placeholder' => 'This survey is closed.']);
+            echo $form->field($survey, "survey_message_not_allowed", ['template' => "<div class='survey-form-field'>{label}{input}</div>",]
+            )->textarea(['rows' => 3, 'placeholder' => 'You are not allowed to access this survey.']);
             echo Html::tag('div', '', ['class' => 'clearfix']);
             echo Html::endTag('div'); // col-md-12
             echo Html::endTag('div'); // row

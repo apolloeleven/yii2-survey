@@ -16,8 +16,9 @@ use yii\helpers\Url;
 /* @var $this yii\web\View */
 /* @var $survey \onmotion\survey\models\Survey */
 
+$message = $survey->survey_message_not_allowed ? $survey->survey_message_not_allowed : 'You are not allowed to access this survey.';
 ?>
 
-<h4><?php echo \Yii::t('survey', 'You are not allowed to access this survey.'); ?></h4>
+<h4><?php echo \Yii::t('survey', $message); ?></h4>
 
 

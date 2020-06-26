@@ -13,9 +13,10 @@ use yii\helpers\Url;
 /* @var $this yii\web\View */
 /* @var $survey \onmotion\survey\models\Survey */
 
+$message = $survey->survey_message_completed ? $survey->survey_message_completed : 'Thank you for participating in the survey.';
 ?>
 
 <p class="text">
-	<?php echo \Yii::t('survey', 'Thank you for participating in the survey.'); ?>
+	<?php echo \Yii::t('survey', $message); ?>
 </p>
 

@@ -28,6 +28,9 @@ use yii\helpers\ArrayHelper;
  * @property string $survey_tags
  * @property string $survey_image
  * @property string $survey_descr
+ * @property string $survey_message_completed
+ * @property string $survey_message_closed
+ * @property string $survey_message_not_allowed
  *
  * @property SurveyUserAnswer[] $surveyUserAnswers
  * @property SurveyQuestion[] $questions
@@ -71,7 +74,7 @@ class Survey extends \yii\db\ActiveRecord
             [['survey_created_at', 'survey_updated_at', 'survey_expired_at'], 'safe'],
             [['survey_is_pinned', 'survey_is_closed', 'survey_is_private', 'survey_is_visible'], 'boolean'],
             [['survey_name'], 'string', 'max' => 45],
-            [['survey_descr'], 'string'],
+            [['survey_descr', 'survey_message_completed', 'survey_message_closed', 'survey_message_not_allowed'], 'string'],
             [['survey_tags', 'survey_image'], 'string', 'max' => 255],
             [['survey_name'], 'required'],
             [['survey_wallet', 'survey_status', 'survey_created_by', 'survey_time_to_pass', 'survey_badge_id'], 'integer'],
@@ -97,6 +100,9 @@ class Survey extends \yii\db\ActiveRecord
             'survey_wallet' => Yii::t('survey', 'Price'),
             'survey_tags' => Yii::t('survey', 'Tags'),
             'survey_descr' => Yii::t('survey', 'Description'),
+            'survey_message_completed' => Yii::t('survey', 'Message Completed'),
+            'survey_message_closed' => Yii::t('survey', 'Message Closed'),
+            'survey_message_not_allowed' => Yii::t('survey', 'Message not Allowed'),
             'survey_time_to_pass' => Yii::t('survey', 'Time to pass'),
             'restrictedUserIds' => Yii::t('survey', 'Restricted users'),
             'imageFile' => '',
