@@ -168,6 +168,10 @@
                         modal.find('.modal-header').html(response.title);
                         modal.find('.modal-body').html(response.content);
                         modal.find('.modal-footer').html(response.footer);
+
+                        var surveyCompletedEvent = new CustomEvent("surveyCompleted", {detail: { survey_id: options.id, success: true }});
+                        document.dispatchEvent(surveyCompletedEvent);
+
                         modal.modal();
                     },
                     complete: function complete() {
@@ -178,6 +182,10 @@
                         var modal = $('#survey-modal');
                         modal.find('.modal-header').html(err.statusText);
                         modal.find('.modal-body').html(err.responseText);
+
+                        var surveyCompletedEvent = new CustomEvent("surveyCompleted", {detail: { survey_id: options.id, success: false, error: err}});
+                        document.dispatchEvent(surveyCompletedEvent);
+
                         modal.modal();
                     }
                 });
