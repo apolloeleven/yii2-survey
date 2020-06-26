@@ -80,51 +80,68 @@ class DefaultController extends Controller
 
     public function actionDone()
     {
-        $allowMultipleTimes = isset($this->module->params['singleUserMode']) ? $this->module->params['singleUserMode'] : false;
-
-        $id = \Yii::$app->request->post('id');
-        if ($id < 0) {
-            throw new UserException('Wrong survey id defined');
-        }
-        $survey = $this->findModel($id);
-
-        $statQuery = SurveyStat::find()
-        ->andWhere([
-            'survey_stat_survey_id' => $id,
-            'survey_stat_user_id' => \Yii::$app->user->getId()
-        ]);
-
-        if($allowMultipleTimes) {
-            $statQuery->andWhere([
-            'uuid' => \Yii::$app->session->get('SURVEY_UUID_' . $id)
-            ]);
-        }
-
-        $stat = $statQuery->one();
-        if ($stat === null) {
-            throw new UserException('The requested survey stat does not exist.');
-        } else {
-            if($stat->survey_stat_is_done) {
-                throw new UserException('The survey has already been completed.');
+        $singleUserMode = isset($this->module->params['singleUserMode']) ? $this->module->params['singleUserMode'] : false;
+        try {
+            $id = \Yii::$app->request->post('id');
+            if ($id < 0) {
+                throw new UserException('Wrong survey id defined');
             }
-        }
-        foreach ($survey->questions as $question) {
-            if (!$this->validateQuestion($question)) {
-                throw new UserException('An error has been occurred during validating.');
-            }
-        }
-        //all validation is passed.
-        $stat->survey_stat_is_done = true;
-        $stat->survey_stat_ended_at = new Expression("NOW()");
-        $stat->save(false);
+            $survey = $this->findModel($id);
 
-        \Yii::$app->response->format = Response::FORMAT_JSON;
-        return [
-            'title' => '<div class="text-center"><h2>' . \Yii::t('survey', 'Thank you!'),
-            'content' => $this->renderPartial('@surveyRoot/views/widget/default/success', ['survey' => $survey]),
-            'footer' =>
-              Html::button('Ok', ['class' => 'btn btn-default pull-left', 'data-dismiss' => "modal"])
-        ];
+            $statQuery = SurveyStat::find()
+                ->andWhere([
+                    'survey_stat_survey_id' => $id,
+                    'survey_stat_user_id' => \Yii::$app->user->getId()
+                ]);
+
+            if ($singleUserMode) {
+                $statQuery->andWhere([
+                    'uuid' => \Yii::$app->session->get('SURVEY_UUID_' . $id)
+                ]);
+            }
+
+            $stat = $statQuery->one();
+            if ($stat === null) {
+                throw new UserException('The requested survey stat does not exist.');
+            } else {
+                if ($stat->survey_stat_is_done) {
+                    throw new UserException('The survey has already been completed.');
+                }
+            }
+            foreach ($survey->questions as $question) {
+                if (!$this->validateQuestion($question)) {
+                    throw new UserException('An error has been occurred during validating.');
+                }
+            }
+            //all validation is passed.
+            $stat->survey_stat_is_done = true;
+            $stat->survey_stat_ended_at = new Expression("NOW()");
+            $stat->save(false);
+
+            //Logout user if singleUserMode is enabled
+            if ($singleUserMode) {
+                \Yii::$app->user->logout(false);
+            }
+
+            \Yii::$app->response->format = Response::FORMAT_JSON;
+            return [
+                'title' => '<div class="text-center"><h2>' . \Yii::t('survey', 'Thank you!'),
+                'content' => $this->renderPartial('@surveyRoot/views/widget/default/success', ['survey' => $survey]),
+                'footer' =>
+                    Html::button('Ok', ['class' => 'btn btn-default pull-left', 'data-dismiss' => "modal"])
+            ];
+        }
+        catch(Exception $ex) {
+            //Logout user if singleUserMode is enabled
+            if ($singleUserMode) {
+                \Yii::$app->user->logout(false);
+            }
+
+            throw $ex;
+        }
+
+    }
+
     }
 
     protected function findModel($id)

@@ -162,12 +162,6 @@ class SurveyStat extends \yii\db\ActiveRecord
             throw new UserException('user does not exist');
         }
 
-//        $isAssigned = SurveyStat::find()->where(['survey_stat_survey_id' => $surveyId])
-//            ->andWhere(['survey_stat_user_id' => $userId])->count();
-//        if ($isAssigned){
-//            throw new UserException('user already assigned', 1001);
-//        }
-
         $surveyStat = new SurveyStat();
         $surveyStat->survey_stat_user_id = $userId;
         $surveyStat->survey_stat_survey_id = $surveyId;
