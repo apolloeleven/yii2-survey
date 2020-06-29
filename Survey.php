@@ -19,7 +19,8 @@ class Survey extends \yii\base\Widget
 {
     public $surveyId = null;
     public $username = null;
-    public $autoStart = null;
+    public $autoStart = true;
+    public $displayStatusInfo = true;
 
     public function init()
     {
@@ -107,7 +108,11 @@ class Survey extends \yii\base\Widget
     private function renderSurvey($id, $stat)
     {
         $survey = $this->findModel($id);
-        echo $this->render('widget/default/index', ['survey' => $survey, 'stat' => $stat]);
+        echo $this->render('widget/default/index', [
+            'survey' => $survey,
+            'stat' => $stat,
+            'displayStatusInfo' => $this->displayStatusInfo]
+        );
     }
 
     protected function findModel($id)

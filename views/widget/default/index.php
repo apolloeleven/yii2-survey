@@ -18,6 +18,7 @@ use yii\helpers\Url;
 /* @var $this yii\web\View */
 /* @var $survey \onmotion\survey\models\Survey */
 /* @var $stat SurveyStat */
+/* @var $displayStatusInfo bool */
 
 
 BootstrapPluginAsset::register($this);
@@ -48,7 +49,7 @@ if ($stat && $stat->survey_stat_is_done) {
 
     <div id="survey-widget">
         <div class="row">
-            <div class="col-sm-8">
+            <div class="col-sm-<?php echo $displayStatusInfo ? 8 : 12?>">
 
                 <div class="survey-container">
                     <div id="survey-widget-title">
@@ -75,6 +76,7 @@ if ($stat && $stat->survey_stat_is_done) {
                 <div class="loader"></div>
 
             </div>
+            <?php if($displayStatusInfo): ?>
             <div class="col-sm-4 hidden-xs">
                 <div class="survey-infopane" data-spy="affix" data-offset-top="260">
                     <?php
@@ -118,6 +120,7 @@ if ($stat && $stat->survey_stat_is_done) {
                     ?>
                 </div>
             </div>
+            <?php endif; ?>
 
         </div>
         <?php
