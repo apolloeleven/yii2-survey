@@ -199,10 +199,10 @@ class Survey extends \yii\db\ActiveRecord
             return null;
         }
         $module = \Yii::$app->getModule('survey');
-        $basepath = $module->params['uploadsUrl'];
-        $path = $basepath . '/' . $this->survey_image;
+        $baseUrl = Yii::getAlias($module->params['uploadsUrl']);
+        $url = $baseUrl . '/' . $this->survey_image;
 
-        return $path;
+        return $url;
     }
 
     public function getAuthorName()

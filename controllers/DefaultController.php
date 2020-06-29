@@ -368,7 +368,7 @@ class DefaultController extends Controller
                     Yii::$app->session->setFlash("warning", 'Ошибка загрузки изображения.');
                 }
             }
-            return $this->renderPartial('update', ['survey' => $model]);
+            return $this->renderPartial('update', ['survey' => $model, 'withUserSearch' => $this->allowUserSearch()]);
 
         } else {
             if ($model->hasErrors()) {
