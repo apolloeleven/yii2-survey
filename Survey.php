@@ -19,6 +19,7 @@ class Survey extends \yii\base\Widget
 {
     public $surveyId = null;
     public $username = null;
+    public $autoStart = null;
 
     public function init()
     {
@@ -80,16 +81,15 @@ class Survey extends \yii\base\Widget
         if (empty($assignedModel)) {
             SurveyStat::assignUser(\Yii::$app->user->getId(), $this->surveyId);
             $assignedModel = SurveyStat::getAssignedUserStat(\Yii::$app->user->getId(), $this->surveyId);
-        } else {
-//            if ($assignedModel->survey_stat_is_done){
-//                return $this->renderClosed();
-//            }
         }
 
-        if ($assignedModel->survey_stat_started_at === null) {
-            $assignedModel->survey_stat_started_at = new Expression('NOW()');
-            $assignedModel->save(false);
+        if ($this->autoStart == true) {
+            if ($assignedModel->survey_stat_started_at === null) {
+                $assignedModel->survey_stat_started_at = new Expression('NOW()');
+            }
         }
+
+        $assignedModel->save(false);
 
         return $this->renderSurvey($this->surveyId, $assignedModel);
     }

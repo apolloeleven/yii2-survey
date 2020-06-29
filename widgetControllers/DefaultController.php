@@ -29,7 +29,6 @@ use yii\web\Response;
  */
 class DefaultController extends Controller
 {
-
     /**
      * @param $question SurveyQuestion
      * @return bool
@@ -130,8 +129,7 @@ class DefaultController extends Controller
                 'footer' =>
                     Html::button('Ok', ['class' => 'btn btn-default pull-left', 'data-dismiss' => "modal"])
             ];
-        }
-        catch(Exception $ex) {
+        } catch (Exception $ex) {
             //Logout user if singleUserMode is enabled
             if ($singleUserMode) {
                 \Yii::$app->user->logout(false);
@@ -142,6 +140,35 @@ class DefaultController extends Controller
 
     }
 
+    public function actionStart($surveyId)
+    {
+        if(\Yii::$app->user->isGuest) {
+            throw new NotFoundHttpException();
+        }
+
+        \Yii::$app->response->format = Response::FORMAT_JSON;
+        $assignedModel = SurveyStat::getAssignedUserStat(\Yii::$app->user->getId(), $surveyId);
+        if (empty($assignedModel)) {
+            return [
+                'success' => false,
+                'error' => \Yii::t('survey', 'User is not assigned to current survey')
+            ];
+        }
+
+        if ($assignedModel->survey_stat_started_at === null) {
+            $assignedModel->survey_stat_started_at = new Expression('NOW()');
+        }
+
+        if ($assignedModel->save(false)) {
+            return [
+                'success' => true
+            ];
+        } else {
+            return [
+                'success' => false,
+                'error' => \Yii::t('survey', 'Failed to save SurveyState record')
+            ];
+        }
     }
 
     protected function findModel($id)
