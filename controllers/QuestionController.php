@@ -87,11 +87,16 @@ class QuestionController extends Controller
         $action = ArrayHelper::getValue($post, "action");
         $result = [];
         \Yii::$app->response->format = Response::FORMAT_JSON;
-
         $questionIsChanged = false;
 
         $questionData = ArrayHelper::getValue($post, "SurveyQuestion.{$question->survey_question_id}");
+        $isTypeChanged = false;
         if (!empty($questionData) && $question->load($questionData, '')) {
+            $isTypeChanged = $question->isAttributeChanged('survey_question_type', false);
+            if($isTypeChanged) {
+                $question->save(false);
+                return ['here' => $question->survey_question_type];
+            }
             $isValid = $question->validate();
             $questionIsChanged = !empty($question->getDirtyAttributes());
             foreach ($question->getErrors() as $attribute => $errors) {
@@ -133,12 +138,15 @@ class QuestionController extends Controller
         $questionData = ArrayHelper::getValue($post, "SurveyQuestion.{$question->survey_question_id}");
 
         $isTypeChanged = false;
-        if (!empty($questionData) && $question->load($questionData, '') && $question->validate()) {
-            $isTypeChanged = $question->isAttributeChanged('survey_question_type');
+        if (!empty($questionData) && $question->load($questionData, '')) {
+            $isTypeChanged = $question->isAttributeChanged('survey_question_type', false);
             if ($isTypeChanged) {
                 $question->changeDefaultValuesOnTypeChange();
+                $question->save(false);
             }
-            $question->save(false);
+            else {
+                $question->save(true);
+            }
         }
 
         $answersData = ArrayHelper::getValue($post, "SurveyAnswer.{$question->survey_question_id}");
