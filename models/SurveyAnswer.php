@@ -108,13 +108,19 @@ class SurveyAnswer extends \yii\db\ActiveRecord
     {
         switch ($this->question->survey_question_type){
             case SurveyType::TYPE_MULTIPLE:
-                $result = SurveyUserAnswer::find()->where(['survey_user_answer_answer_id' => $this->survey_answer_id])
+                $result = SurveyUserAnswer::find()
+                    ->joinWith('surveyStat')
+                    ->andWhere(['survey_stat_is_done' => 1])
+                    ->andWhere(['survey_user_answer_answer_id' => $this->survey_answer_id])
                     ->andWhere(['survey_user_answer_value' => 1])
                     ->count();
                 break;
             case SurveyType::TYPE_ONE_OF_LIST:
             case SurveyType::TYPE_DROPDOWN:
-                $result = SurveyUserAnswer::find()->andWhere(['survey_user_answer_value' => $this->survey_answer_id])
+                $result = SurveyUserAnswer::find()
+                    ->joinWith('surveyStat')
+                    ->andWhere(['survey_stat_is_done' => 1])
+                    ->andWhere(['survey_user_answer_value' => $this->survey_answer_id])
                     ->count();
                 break;
             case SurveyType::TYPE_RANKING:
@@ -122,17 +128,22 @@ class SurveyAnswer extends \yii\db\ActiveRecord
                 $result = (new Query())
                     ->from(SurveyUserAnswer::tableName())
                     ->addSelect(['AVG(survey_user_answer_value) average'])
+                    ->leftJoin(SurveyStat::tableName(), 'survey_user_answer_survey_stat_id = survey_stat_id')
+                    ->andWhere(['survey_stat_is_done' => 1])
                     ->where(['survey_user_answer_answer_id' => $this->survey_answer_id])
                     ->andWhere(['>', 'survey_user_answer_value', 0])
                     ->groupBy(['survey_user_answer_answer_id'])->scalar();
                 break;
             case SurveyType::TYPE_SLIDER:
-                $result = (new Query())
-                    ->from(SurveyUserAnswer::tableName())
-                    ->addSelect(['AVG(survey_user_answer_value) average'])
+                $result = SurveyUserAnswer::find()
                     ->andWhere(['survey_user_answer_question_id' => $this->question->survey_question_id])
+                    ->addSelect(['survey_user_answer_value as score', 'COUNT(survey_user_answer_value) as count'])
+                    ->leftJoin(SurveyStat::tableName(), 'survey_user_answer_survey_stat_id = survey_stat_id')
+                    ->andWhere(['survey_stat_is_done' => 1])
                     ->andWhere(['is not', 'survey_user_answer_value', null])
-                    ->groupBy(['survey_user_answer_question_id'])->scalar();
+                    ->groupBy(['survey_user_answer_value'])
+                    ->asArray()
+                    ->all();
                 break;
             default:
                 $result = 0;

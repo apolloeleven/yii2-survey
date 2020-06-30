@@ -67,10 +67,15 @@ class DefaultController extends Controller
 
         $searchModel = new SurveyStatSearch();
         $dataProvider = $searchModel->search(\Yii::$app->request->queryParams);
-        $dataProvider->query->andWhere(['survey_stat_survey_id' => $survey->survey_id])
-            ->orderBy(['survey_stat_assigned_at' => SORT_DESC]);
+        $dataProvider->query
+            ->andWhere(['survey_stat_survey_id' => $survey->survey_id])
+            ->andWhere(['survey_stat_is_done' => 1]);
 
         $dataProvider->pagination->pageSize = 10;
+
+
+//        $completedSurveysDataProvider = $dataprovider;
+
 
         $restrictedUserDataProvider = new ActiveDataProvider([
         	'query' => $survey->getRestrictedUsers()

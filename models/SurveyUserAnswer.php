@@ -130,5 +130,13 @@ class SurveyUserAnswer extends \yii\db\ActiveRecord
         return $this->hasOne(\Yii::$app->user->identityClass::className(), ['id' => 'survey_user_answer_user_id']);
     }
 
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSurveyStat()
+    {
+        return $this->hasOne(SurveyStat::class, ['survey_stat_id' => 'survey_user_answer_survey_stat_id']);
+    }
+
 
 }

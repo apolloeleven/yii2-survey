@@ -29,7 +29,7 @@ BootstrapPluginAsset::register($this);
 
 
 ?>
-    <div  id="survey-view">
+    <div id="survey-view">
         <div id="survey-title">
             <div class="subcontainer flex">
                 <h4><?= $survey->survey_name; ?></h4>
@@ -42,8 +42,8 @@ BootstrapPluginAsset::register($this);
                               title="<?= \Yii::t('survey', 'Respondents') ?>"><?= \Yii::t('survey', 'Number of respondents') ?>: <?= $survey->getRespondentsCount() ?></span>
                         <span class="survey-label btn btn-info btn-xs" data-toggle="tooltip"
                               title="<?= \Yii::t('survey', 'Questions') ?>"><?= \Yii::t('survey', 'Questions') ?>: <?= $survey->getQuestions()->count() ?></span>
-	                    <span class="survey-label btn btn-info btn-xs restricted-users-toggle" data-toggle="tooltip"
-	                          title="<?= \Yii::t('survey', 'Restricted users') ?>"><?= \Yii::t('survey', 'Restricted users') ?>: <?= $survey->getRestrictedUsersCount() ?></span>
+                        <span class="survey-label btn btn-info btn-xs restricted-users-toggle" data-toggle="tooltip"
+                              title="<?= \Yii::t('survey', 'Restricted users') ?>"><?= \Yii::t('survey', 'Restricted users') ?>: <?= $survey->getRestrictedUsersCount() ?></span>
                     </div>
 
                 </div>
@@ -121,13 +121,13 @@ BootstrapPluginAsset::register($this);
                 echo Html::tag('div', '', ['class' => 'clearfix']);
                 echo $form->field($survey, "survey_is_visible", ['template' => "<div class='survey-form-field submit-on-click'>{input}{label}</div>",]
                 )->checkbox(['class' => 'checkbox'], false);
-				if ($withUserSearch) {
-					echo Html::tag('div', '', ['class' => 'clearfix']);
-					echo $form->field($survey,
-						"survey_is_private",
-						['template' => "<div class='survey-form-field submit-on-click'>{input}{label}</div>",]
-					)->checkbox(['class' => 'checkbox danger'], false);
-				}
+                if ($withUserSearch) {
+                    echo Html::tag('div', '', ['class' => 'clearfix']);
+                    echo $form->field($survey,
+                        "survey_is_private",
+                        ['template' => "<div class='survey-form-field submit-on-click'>{input}{label}</div>",]
+                    )->checkbox(['class' => 'checkbox danger'], false);
+                }
                 echo Html::endTag('div');
 
                 echo Html::beginTag('div', ['class' => 'col-md-9']);
@@ -147,6 +147,34 @@ BootstrapPluginAsset::register($this);
 
         </div>
         <div>
+            <?php Pjax::begin(['id' => 'survey_stats']) ?>
+            <div class="container">
+                <?php echo \yii\grid\GridView::widget([
+                    'dataProvider' => $dataProvider,
+                    'filterModel' => $searchModel,
+                    'columns' => [
+                        [
+                            'attribute' => 'survey.survey_name',
+                            'label' => Yii::t('survey', 'Survey')
+                        ],
+                        [
+                            'attribute' => 'survey_stat_ended_at',
+                            'label' => Yii::t('survey', 'Survey Date'),
+                            'format' => 'date',
+                            'filter' => \kartik\date\DatePicker::widget([
+                                'model' => $searchModel,
+                                'attribute' => 'survey_stat_ended_at',
+                                'pluginOptions' => [
+                                    'autoclose' => true,
+                                    'format' => 'yyyy-mm-dd'
+                                ]
+                            ])
+                        ],
+                    ],
+                ]) ?>
+            </div>
+            <?php Pjax::end(); ?>
+
             <div class="survey-container">
 
                 <div id="survey-questions">
@@ -157,30 +185,32 @@ BootstrapPluginAsset::register($this);
                     ?>
                 </div>
             </div>
+
+
         </div>
     </div>
 
-<div class="hidden-modal-right " id="respondents-modal">
-    <div class="close-btn">&times;</div>
-    <?php
+    <div class="hidden-modal-right " id="respondents-modal">
+        <div class="close-btn">&times;</div>
+        <?php
 
-    $surveyId = $survey->survey_id;
+        $surveyId = $survey->survey_id;
 
-    echo $this->render('respondents',
-        compact('searchModel', 'dataProvider', 'surveyId', 'withUserSearch'));
-    ?>
-</div>
+        echo $this->render('respondents',
+            compact('searchModel', 'dataProvider', 'surveyId', 'withUserSearch'));
+        ?>
+    </div>
 
-<div class="hidden-modal-right " id="restricted-users-modal">
-    <div class="close-btn">&times;</div>
-    <?php
+    <div class="hidden-modal-right " id="restricted-users-modal">
+        <div class="close-btn">&times;</div>
+        <?php
 
-    $surveyId = $survey->survey_id;
+        $surveyId = $survey->survey_id;
 
-    echo $this->render('restrictedUsers',
-        compact('searchModel', 'restrictedUserDataProvider', 'surveyId', 'withUserSearch'));
-    ?>
-</div>
+        echo $this->render('restrictedUsers',
+            compact('searchModel', 'restrictedUserDataProvider', 'surveyId', 'withUserSearch'));
+        ?>
+    </div>
 
 <?php
 $this->registerJs(<<<JS

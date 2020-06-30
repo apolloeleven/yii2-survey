@@ -12,6 +12,14 @@ use onmotion\survey\models\SurveyStat;
  */
 class SurveyStatSearch extends SurveyStat
 {
+
+    public function attributes()
+    {
+        // add related fields to searchable attributes
+        return array_merge(parent::attributes(), ['survey.survey_name']);
+    }
+
+
     /**
      * @inheritdoc
      */
@@ -19,7 +27,7 @@ class SurveyStatSearch extends SurveyStat
     {
         return [
             [['survey_stat_id', 'survey_stat_survey_id', 'survey_stat_user_id'], 'integer'],
-            [['survey_stat_assigned_at', 'survey_stat_started_at', 'survey_stat_updated_at', 'survey_stat_ended_at', 'survey_stat_ip'], 'safe'],
+            [['survey_stat_assigned_at', 'survey_stat_started_at', 'survey_stat_updated_at', 'survey_stat_ended_at', 'survey_stat_ip', 'survey.survey_name'], 'safe'],
             [['survey_stat_is_done'], 'boolean'],
         ];
     }
@@ -46,7 +54,7 @@ class SurveyStatSearch extends SurveyStat
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query->joinWith('survey'),
-            'sort' => ['defaultOrder' => ['survey_stat_assigned_at' => SORT_DESC]]
+            'sort' => ['defaultOrder' => ['survey_stat_ended_at' => SORT_DESC]]
 
         ]);
 
@@ -54,7 +62,7 @@ class SurveyStatSearch extends SurveyStat
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
-             $query->where('0=1');
+            $query->where('0=1');
             return $dataProvider;
         }
 
@@ -65,11 +73,13 @@ class SurveyStatSearch extends SurveyStat
             'survey_stat_assigned_at' => $this->survey_stat_assigned_at,
             'survey_stat_started_at' => $this->survey_stat_started_at,
             'survey_stat_updated_at' => $this->survey_stat_updated_at,
-            'survey_stat_ended_at' => $this->survey_stat_ended_at,
+//            'survey_stat_ended_at' => $this->survey_stat_ended_at,
+            'DATE(survey_stat_ended_at)' => $this->survey_stat_ended_at,
             'survey_stat_is_done' => $this->survey_stat_is_done,
         ]);
 
         $query->andFilterWhere(['like', 'survey_stat_ip', $this->survey_stat_ip]);
+        $query->andFilterWhere(['like', 'survey.survey_name', $this->getAttribute('survey.survey_name')]);
 
         return $dataProvider;
     }

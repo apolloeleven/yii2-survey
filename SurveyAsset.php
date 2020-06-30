@@ -8,7 +8,6 @@
 
 namespace onmotion\survey;
 
-
 use yii\web\AssetBundle;
 
 class SurveyAsset extends AssetBundle
@@ -33,5 +32,7 @@ class SurveyAsset extends AssetBundle
     ];
     public $depends = [
         'yii\web\YiiAsset',
+        'trntv\yii\datetime\assets\DateTimeAsset',
+        'yii\grid\GridViewAsset'
     ];
 }
