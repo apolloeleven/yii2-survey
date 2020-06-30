@@ -2,6 +2,7 @@
 
 namespace onmotion\survey\models\search;
 
+use phpDocumentor\Reflection\Types\Boolean;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
@@ -12,7 +13,6 @@ use onmotion\survey\models\SurveyStat;
  */
 class SurveyStatSearch extends SurveyStat
 {
-
     public function attributes()
     {
         // add related fields to searchable attributes
@@ -73,7 +73,6 @@ class SurveyStatSearch extends SurveyStat
             'survey_stat_assigned_at' => $this->survey_stat_assigned_at,
             'survey_stat_started_at' => $this->survey_stat_started_at,
             'survey_stat_updated_at' => $this->survey_stat_updated_at,
-//            'survey_stat_ended_at' => $this->survey_stat_ended_at,
             'DATE(survey_stat_ended_at)' => $this->survey_stat_ended_at,
             'survey_stat_is_done' => $this->survey_stat_is_done,
         ]);
@@ -82,5 +81,19 @@ class SurveyStatSearch extends SurveyStat
         $query->andFilterWhere(['like', 'survey.survey_name', $this->getAttribute('survey.survey_name')]);
 
         return $dataProvider;
+    }
+
+    /**
+     * Determines whether query parameters are applyed or not
+     *
+     * @return Boolean
+     */
+    public function isFiltered() {
+        foreach($this->attributes as $attribute) {
+            if($attribute != null) {
+                return true;
+            }
+        }
+        return false;
     }
 }

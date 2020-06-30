@@ -8,5 +8,7 @@
 
 /** @var $question \onmotion\survey\models\SurveyQuestion */
 /** @var $form \yii\widgets\ActiveForm */
+/** @var $statIds integer[] */
 
-echo $this->render('/answers/view/' . $question->survey_question_type, ['question' => $question]);
+
+echo $this->render('/answers/view/' . $question->survey_question_type, ['question' => $question, 'statIds' => $statIds]);

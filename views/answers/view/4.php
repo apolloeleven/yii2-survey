@@ -13,10 +13,11 @@ use yii\helpers\Url;
 
 /** @var $question \onmotion\survey\models\SurveyQuestion */
 /** @var $form \yii\widgets\ActiveForm */
+/** @var $statIds integer[] */
 
 echo Html::beginTag('div', ['class' => 'answers-stat']);
 foreach ($question->answers as $i => $answer) {
-    $average = $answer->getTotalUserAnswersCount();
+    $average = $answer->getTotalUserAnswersCount($statIds);
     $average = $average > 0 ? round($average, 1) : 0;
     echo Html::label($answer->survey_answer_name) . ' - ' . "average <b>$average</b>";
     echo Html::tag('br', '');

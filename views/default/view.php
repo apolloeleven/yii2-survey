@@ -22,6 +22,8 @@ use yii\widgets\Pjax;
 /* @var $survey \onmotion\survey\models\Survey */
 /* @var $respondentsCount integer */
 /* @var $withUserSearch boolean */
+/* @var $dataProvider \yii\data\ActiveDataProvider */
+/* @var $surveyStatIds \yii\data\ActiveDataProvider */
 
 $this->title = Yii::t('survey', 'Survey') . ' - ' . $survey->survey_name;
 
@@ -147,17 +149,26 @@ BootstrapPluginAsset::register($this);
 
         </div>
         <div>
-            <?php Pjax::begin(['id' => 'survey_stats']) ?>
+            <?php Pjax::begin(['id' => 'survey-stats-table']) ?>
             <div class="container">
                 <?php echo \yii\grid\GridView::widget([
                     'dataProvider' => $dataProvider,
                     'filterModel' => $searchModel,
                     'columns' => [
                         [
+                            'contentOptions' => ['style' => 'min-width: 300px; white-space: nowrap;'],
                             'attribute' => 'survey.survey_name',
-                            'label' => Yii::t('survey', 'Survey')
+                            'filter' => false,
+                            'format' => 'raw',
+                            'label' => Yii::t('survey', 'Survey'),
+                            /** @var $model SurveyStatSearch */
+                            'value' => function ($model) {
+                                return Html::a($model->survey->survey_name, Url::to(['default/detail-view', 'statId' => $model->survey_stat_id]),
+                                    ['class' => 'survey-stat-link', 'data' => [ 'pjax' => '0']]);
+                            }
                         ],
                         [
+                            'headerOptions' => ['style' => 'min-width:300px'],
                             'attribute' => 'survey_stat_ended_at',
                             'label' => Yii::t('survey', 'Survey Date'),
                             'format' => 'date',
@@ -170,21 +181,42 @@ BootstrapPluginAsset::register($this);
                                 ]
                             ])
                         ],
+                        [
+                            'attribute' => 'commentText',
+                            'label' => 'Comment',
+                            /** @var $model SurveyStatSearch */
+                            'value' => function ($model) {
+                                foreach ($model->surveyUserAnswers as $answerData) {
+                                    if ($answerData->question->survey_question_type === \onmotion\survey\models\SurveyType::TYPE_COMMENT_BOX) {
+                                        return $answerData->survey_user_answer_text;
+                                    }
+                                }
+                                return '';
+                            }
+                        ]
                     ],
                 ]) ?>
             </div>
             <?php Pjax::end(); ?>
 
+            <?php Pjax::begin(['id' => 'survey-filtered-stats']) ?>
             <div class="survey-container">
-
+                <h3 style="margin-left: 20px"><?php echo \Yii::t('survey', 'Number of respodents') . ':' ?>
+                    <b><?php echo $respondentsCount; ?></b></h3>
                 <div id="survey-questions">
-                    <?php
-                    foreach ($survey->questions as $i => $question) {
-                        echo $this->render('/question/_viewForm', ['question' => $question, 'number' => $i]);
+                    <?php if ($respondentsCount > 0) {
+                        foreach ($survey->questions as $i => $question) {
+                            echo $this->render('/question/_viewForm', [
+                                'question' => $question,
+                                'number' => $i,
+                                'statIds' => $surveyStatIds
+                            ]);
+                        }
                     }
                     ?>
                 </div>
             </div>
+            <?php Pjax::end(); ?>
 
 
         </div>

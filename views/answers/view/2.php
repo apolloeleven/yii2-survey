@@ -13,12 +13,13 @@ use yii\helpers\Html;
 
 /** @var $question \onmotion\survey\models\SurveyQuestion */
 /** @var $form \yii\widgets\ActiveForm */
+/** @var $statIds integer[] */
 
-$totalVotesCount = $question->getTotalUserAnswersCount();
+$totalVotesCount = $question->getTotalUserAnswersCount($statIds);
 
 echo Html::beginTag('div', ['class' => 'answers-stat']);
 foreach ($question->answers as $i => $answer) {
-    $count = $answer->getTotalUserAnswersCount();
+    $count = $answer->getTotalUserAnswersCount($statIds);
     try {
         $percent = ($count / $totalVotesCount) * 100;
     }catch (\Exception $e){

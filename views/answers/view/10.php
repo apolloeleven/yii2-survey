@@ -7,8 +7,9 @@ use yii\helpers\Html;
 
 /** @var $question \onmotion\survey\models\SurveyQuestion */
 /** @var $form \yii\widgets\ActiveForm */
+/** @var $statIds integer[] */
 
-$totalVotesCount = $question->getTotalUserAnswersCount();
+$totalVotesCount = $question->getTotalUserAnswersCount($statIds);
 
 ?>
 <div class="answers-stat">

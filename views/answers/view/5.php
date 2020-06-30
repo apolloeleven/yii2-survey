@@ -15,11 +15,12 @@ use yii\helpers\Url;
 
 /** @var $question \onmotion\survey\models\SurveyQuestion */
 /** @var $form \yii\widgets\ActiveForm */
+/** @var $statIds integer[] */
 
 echo Html::beginTag('div', ['class' => 'answers-stat']);
 
 
-$answertStats = $question->answers[0]->getTotalUserAnswersCount();
+$answertStats = $question->answers[0]->getTotalUserAnswersCount($statIds);
 $totalVotesCount = array_sum(\yii\helpers\ArrayHelper::getColumn($answertStats, 'count'));
 $totalScore = 0;
 foreach ($answertStats as $stat) {

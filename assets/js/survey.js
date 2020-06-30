@@ -12,6 +12,17 @@
                 var appendContainer = $('#survey-questions-append').find('.survey-question-pjax-container');
                 appendContainer.appendTo('#survey-questions');
             }
+            else if(e.target.id === 'survey-stats-table') {
+                $('#survey-filtered-stats').innerHTML = '';
+                $.pjax.reload({container: '#survey-filtered-stats'});
+            }
+            else if(e.target.id === 'survey-filtered-stats') {
+                hideProgress();
+                //Re-initialize bootstrap Progress
+                $('#survey-questions .progress-bar-info').each(function() {
+                    $(this).removeClass('init');
+                });
+            }
         });
 
         $(document).on('pjax:timeout', function (event) {

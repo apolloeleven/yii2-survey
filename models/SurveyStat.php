@@ -26,6 +26,7 @@ use yii\db\Expression;
  *
  * @property Survey $survey
  * @property User $user
+ * @property SurveyUserAnswer[] $surveyUserAnswers
  */
 class SurveyStat extends \yii\db\ActiveRecord
 {
@@ -219,5 +220,12 @@ class SurveyStat extends \yii\db\ActiveRecord
             ->one();
 
         return $result;
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSurveyUserAnswers() {
+        return $this->hasMany(SurveyUserAnswer::class, ['survey_user_answer_survey_stat_id' => 'survey_stat_id']);
     }
 }

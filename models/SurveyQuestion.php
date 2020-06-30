@@ -181,19 +181,31 @@ class SurveyQuestion extends \yii\db\ActiveRecord
      *
      * @return int
      */
-    public function getTotalUserAnswersCount()
+    public function getTotalUserAnswersCount($statIds = null)
     {
         switch ($this->survey_question_type){
             case SurveyType::TYPE_MULTIPLE:
-                $result = SurveyUserAnswer::find()->where(['survey_user_answer_question_id' => $this->survey_question_id])
-                    ->andWhere(['survey_user_answer_value' => 1])
-                    ->count();
+                $query = SurveyUserAnswer::find()
+                    ->andWhere(['survey_user_answer_question_id' => $this->survey_question_id])
+                    ->andWhere(['survey_user_answer_value' => 1]);
+
+                if($statIds) {
+                    $query->andWhere(['survey_user_answer_survey_stat_id' => $statIds]);
+                }
+
+                $result = $query->count();
                 break;
             case SurveyType::TYPE_ONE_OF_LIST:
             case SurveyType::TYPE_DROPDOWN:
-                $result = SurveyUserAnswer::find()->where(['survey_user_answer_question_id' => $this->survey_question_id])
-                    ->andWhere(['>', 'survey_user_answer_value', 0])
-                    ->count();
+                $query = SurveyUserAnswer::find()
+                    ->andWhere(['survey_user_answer_question_id' => $this->survey_question_id])
+                    ->andWhere(['>', 'survey_user_answer_value', 0]);
+
+                if($statIds) {
+                    $query->andWhere(['survey_user_answer_survey_stat_id' => $statIds]);
+                }
+
+                $result = $query->count();
                 break;
             default:
                 $result = 0;

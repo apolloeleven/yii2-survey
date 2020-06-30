@@ -20,6 +20,7 @@ use Yii;
  * @property SurveyQuestion $question
  * @property Survey $surveyUserAnswerSurvey
  * @property User $surveyUserAnswerUser
+ * @property SurveyStat $surveyStat
  */
 class SurveyUserAnswer extends \yii\db\ActiveRecord
 {
