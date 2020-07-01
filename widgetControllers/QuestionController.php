@@ -32,7 +32,10 @@ class QuestionController extends Controller
      */
     protected function validate(&$question)
     {
-        $stat = SurveyStat::getAssignedUserStat(\Yii::$app->user->getId(), $question->survey->survey_id);
+        $singleUserMode = \Yii::$app->session->get('SURVEY_SINGLE_USER_MODE', false);
+        $userId = $singleUserMode ? \Yii::$app->session->get('SURVEY_USER_ID') : \Yii::$app->user->getId();
+
+        $stat = SurveyStat::getAssignedUserStat($userId, $question->survey->survey_id);
         //не работаем с завершенными опросами
         if ($stat->survey_stat_is_done) {
             return false;
@@ -59,7 +62,7 @@ class QuestionController extends Controller
 	                }
 
 	                $userAnswer = isset($userAnswers[$answer->survey_answer_id]) ? $userAnswers[$answer->survey_answer_id] : (new SurveyUserAnswer([
-                        'survey_user_answer_user_id' => \Yii::$app->user->getId(),
+                        'survey_user_answer_user_id' => $userId,
                         'survey_user_answer_survey_id' => $question->survey_question_survey_id,
                         'survey_user_answer_question_id' => $question->survey_question_id,
                         'survey_user_answer_answer_id' => $answer->survey_answer_id,
@@ -87,7 +90,7 @@ class QuestionController extends Controller
                 || $question->survey_question_type === SurveyType::TYPE_COMMENT_BOX
             ) {
                 $userAnswer = !empty(current($userAnswers)) ? current($userAnswers) : (new SurveyUserAnswer([
-                    'survey_user_answer_user_id' => \Yii::$app->user->getId(),
+                    'survey_user_answer_user_id' => $userId,
                     'survey_user_answer_survey_id' => $question->survey_question_survey_id,
                     'survey_user_answer_question_id' => $question->survey_question_id,
                     'survey_user_answer_survey_stat_id' => $stat->survey_stat_id

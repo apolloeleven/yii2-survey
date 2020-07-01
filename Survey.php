@@ -39,7 +39,8 @@ class Survey extends \yii\base\Widget
             if (!$user) {
                 throw new \yii\base\Exception(\Yii::t('survey', 'Survey user was not found. check "username" param'));
             }
-            \Yii::$app->user->login($user);
+            \Yii::$app->session->set('SURVEY_SINGLE_USER_MODE', true);
+            \Yii::$app->session->set('SURVEY_USER_ID', $user->getId());
 
             if (!\Yii::$app->session->get('SURVEY_UUID_' . $this->surveyId)) {
                 \Yii::$app->session->set('SURVEY_UUID_' . $this->surveyId, \Yii::$app->security->generateRandomString());
@@ -56,10 +57,6 @@ class Survey extends \yii\base\Widget
 
     public function beforeRun()
     {
-//        $assignedModel = SurveyStat::getAssignedUserStat(\Yii::$app->user->getId(), $this->surveyId);
-//        if (empty($assignedModel)) {
-//            throw new ForbiddenHttpException();
-//        }
         return parent::beforeRun();
     }
 
@@ -78,10 +75,13 @@ class Survey extends \yii\base\Widget
             return $this->renderClosed($survey);
         }
 
-        $assignedModel = SurveyStat::getAssignedUserStat(\Yii::$app->user->getId(), $this->surveyId);
+        $singleUserMode = \Yii::$app->session->get('SURVEY_SINGLE_USER_MODE', false);
+        $userId = $singleUserMode ? \Yii::$app->session->get('SURVEY_USER_ID') : \Yii::$app->user->getId();
+
+        $assignedModel = SurveyStat::getAssignedUserStat($userId, $this->surveyId);
         if (empty($assignedModel)) {
-            SurveyStat::assignUser(\Yii::$app->user->getId(), $this->surveyId);
-            $assignedModel = SurveyStat::getAssignedUserStat(\Yii::$app->user->getId(), $this->surveyId);
+            SurveyStat::assignUser($userId, $this->surveyId);
+            $assignedModel = SurveyStat::getAssignedUserStat($userId, $this->surveyId);
         }
 
         if ($this->autoStart == true) {

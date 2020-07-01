@@ -79,6 +79,9 @@ class DefaultController extends Controller
 
     public function actionDone()
     {
+        $singleUserMode = \Yii::$app->session->get('SURVEY_SINGLE_USER_MODE', false);
+        $userId = $singleUserMode ? \Yii::$app->session->get('SURVEY_USER_ID') : \Yii::$app->user->getId();
+
         $singleUserMode = isset($this->module->params['singleUserMode']) ? $this->module->params['singleUserMode'] : false;
         try {
             $id = \Yii::$app->request->post('id');
@@ -90,7 +93,7 @@ class DefaultController extends Controller
             $statQuery = SurveyStat::find()
                 ->andWhere([
                     'survey_stat_survey_id' => $id,
-                    'survey_stat_user_id' => \Yii::$app->user->getId()
+                    'survey_stat_user_id' => $userId
                 ]);
 
             if ($singleUserMode) {
@@ -117,10 +120,9 @@ class DefaultController extends Controller
             $stat->survey_stat_ended_at = new Expression("NOW()");
             $stat->save(false);
 
-            //Logout user if singleUserMode is enabled
-            if ($singleUserMode) {
-                \Yii::$app->user->logout(false);
-            }
+//            if ($singleUserMode) {
+//                \Yii::$app->user->logout(false);
+//            }
 
             \Yii::$app->response->format = Response::FORMAT_JSON;
             return [
@@ -142,12 +144,11 @@ class DefaultController extends Controller
 
     public function actionStart($surveyId)
     {
-        if(\Yii::$app->user->isGuest) {
-            throw new NotFoundHttpException();
-        }
+        $singleUserMode = \Yii::$app->session->get('SURVEY_SINGLE_USER_MODE', false);
+        $userId = $singleUserMode ? \Yii::$app->session->get('SURVEY_USER_ID') : \Yii::$app->user->getId();
 
         \Yii::$app->response->format = Response::FORMAT_JSON;
-        $assignedModel = SurveyStat::getAssignedUserStat(\Yii::$app->user->getId(), $surveyId);
+        $assignedModel = SurveyStat::getAssignedUserStat($userId, $surveyId);
         if (empty($assignedModel)) {
             return [
                 'success' => false,
