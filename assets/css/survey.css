@@ -558,6 +558,9 @@
 #remote-modal .modal-content {
   background: rgba(255, 255, 255, 0.83);
 }
+#remote-modal .modal-header button {
+  margin-top: -8px;
+}
 #remote-modal .modal-content .modal-body {
   background: transparent;
 }

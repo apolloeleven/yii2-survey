@@ -61,7 +61,8 @@ class SurveyType extends \yii\db\ActiveRecord
     public static function getDropdownList()
     {
         return ArrayHelper::map(SurveyType::find()
-            ->asArray()->all(), 'survey_type_id', function($model){
+            ->andWhere(['not', ['survey_type_id' => [self::TYPE_RANKING, self::TYPE_DATE_TIME, self::TYPE_CALENDAR]]])
+            ->asArray()->all(), 'survey_type_id', function ($model) {
             return \Yii::t('survey', $model['survey_type_name']);
         });
     }

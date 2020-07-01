@@ -70,7 +70,6 @@ echo $form->field($question, "[{$question->survey_question_id}]survey_question_t
 
         "select2:selecting" => new \yii\web\JsExpression(<<<JS
                 function _(e) {
-  console.log("changing");
                      var that = $(this);
                      var previous = that.val();
                      var current = e.params.args.data.id;
@@ -145,8 +144,8 @@ if (in_array($question->survey_question_type, [
     SurveyType::TYPE_ONE_OF_LIST,
     SurveyType::TYPE_DROPDOWN
 ])) {
-    echo Html::tag('br', '');
-    echo $form->field($question, "[{$question->survey_question_id}]survey_question_is_scorable")->checkbox(['class' => 'checkbox-updatable']);
+//    echo Html::tag('br', '');
+//    echo $form->field($question, "[{$question->survey_question_id}]survey_question_is_scorable")->checkbox(['class' => 'checkbox-updatable']);
 }
 ?>
     <div class="preloader">

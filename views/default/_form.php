@@ -85,59 +85,59 @@ echo Dialog::widget();
             echo Html::tag('br', '');
 
             echo Html::beginTag('div', ['class' => 'survey-content-wrap']);
-            echo Html::beginTag('div', ['class' => 'row']);
-            echo Html::beginTag('div', ['class' => 'col-md-6']);
-            echo Html::label(Yii::t('survey', 'Expired at') . ': ', 'survey-survey_expired_at');
-            echo Editable::widget([
-                'model' => $survey,
-                'attribute' => 'survey_expired_at',
-                'header' => 'Expired at',
-                'asPopover' => true,
-                'size' => 'md',
-                'inputType' => Editable::INPUT_DATETIME,
-                'formOptions' => [
-                    'action' => Url::toRoute(['default/update-editable', 'property' => 'survey_expired_at'])
-                ],
-                'additionalData' => ['id' => $survey->survey_id],
-                'options' => [
-                    'class' => Editable::INPUT_DATETIME,
-                    'pluginOptions' => [
-                        'autoclose' => true,
-                        // 'format' => 'd.m.Y H:i'
-                    ],
-                    'options' => ['placeholder' => 'Expired at']
-                ],
-                'showButtonLabels' => true,
-                'submitButton' => [
-                    'icon' => false,
-                    'label' => 'OK',
-                    'class' => 'btn btn-sm btn-primary'
-                ]
-            ]);
-            echo Html::endTag('div'); // col-md-6
-
-            echo Html::beginTag('div', ['class' => 'col-md-6']);
-            echo Html::label(Yii::t('survey', 'Time to pass') . ': ', 'survey-survey_time_to_pass');
-            echo Editable::widget([
-                'model' => $survey,
-                'attribute' => 'survey_time_to_pass',
-                'asPopover' => true,
-                'header' => 'Time to pass',
-                'size' => 'md',
-                'formOptions' => [
-                    'action' => Url::toRoute(['default/update-editable', 'property' => 'survey_time_to_pass'])
-                ],
-                'additionalData' => ['id' => $survey->survey_id],
-                'options' => [
-                    'class' => 'form-control',
-                    'placeholder' => 'Enter time in minutes...',
-                    'type' => 'number',
-                ]
-            ]);
-            echo Html::label(Yii::t('survey', 'minutes'));
-            echo Html::endTag('div'); // col-md-6
-
-            echo Html::endTag('div'); // row
+//            echo Html::beginTag('div', ['class' => 'row']);
+//            echo Html::beginTag('div', ['class' => 'col-md-6']);
+//            echo Html::label(Yii::t('survey', 'Expired at') . ': ', 'survey-survey_expired_at');
+//            echo Editable::widget([
+//                'model' => $survey,
+//                'attribute' => 'survey_expired_at',
+//                'header' => 'Expired at',
+//                'asPopover' => true,
+//                'size' => 'md',
+//                'inputType' => Editable::INPUT_DATETIME,
+//                'formOptions' => [
+//                    'action' => Url::toRoute(['default/update-editable', 'property' => 'survey_expired_at'])
+//                ],
+//                'additionalData' => ['id' => $survey->survey_id],
+//                'options' => [
+//                    'class' => Editable::INPUT_DATETIME,
+//                    'pluginOptions' => [
+//                        'autoclose' => true,
+//                        // 'format' => 'd.m.Y H:i'
+//                    ],
+//                    'options' => ['placeholder' => 'Expired at']
+//                ],
+//                'showButtonLabels' => true,
+//                'submitButton' => [
+//                    'icon' => false,
+//                    'label' => 'OK',
+//                    'class' => 'btn btn-sm btn-primary'
+//                ]
+//            ]);
+//            echo Html::endTag('div'); // col-md-6
+//
+//            echo Html::beginTag('div', ['class' => 'col-md-6']);
+//            echo Html::label(Yii::t('survey', 'Time to pass') . ': ', 'survey-survey_time_to_pass');
+//            echo Editable::widget([
+//                'model' => $survey,
+//                'attribute' => 'survey_time_to_pass',
+//                'asPopover' => true,
+//                'header' => 'Time to pass',
+//                'size' => 'md',
+//                'formOptions' => [
+//                    'action' => Url::toRoute(['default/update-editable', 'property' => 'survey_time_to_pass'])
+//                ],
+//                'additionalData' => ['id' => $survey->survey_id],
+//                'options' => [
+//                    'class' => 'form-control',
+//                    'placeholder' => 'Enter time in minutes...',
+//                    'type' => 'number',
+//                ]
+//            ]);
+//            echo Html::label(Yii::t('survey', 'minutes'));
+//            echo Html::endTag('div'); // col-md-6
+//
+//            echo Html::endTag('div'); // row
 
 
             Pjax::begin([
@@ -178,56 +178,60 @@ echo Dialog::widget();
             echo Html::endTag('div'); // row
 
             echo Html::beginTag('div', ['class' => 'row']);
-            echo Html::beginTag('div', ['class' => 'col-md-3']);
-            echo $form->field($survey, "survey_is_closed", ['template' => "<div class='survey-form-field submit-on-click'>{input}{label}</div>",]
-            )->checkbox(['class' => 'checkbox danger'], false);
-            echo Html::tag('div', '', ['class' => 'clearfix']);
-            echo $form->field($survey, "survey_is_pinned", ['template' => "<div class='survey-form-field submit-on-click'>{input}{label}</div>",]
-            )->checkbox(['class' => 'checkbox'], false);
-            echo Html::tag('div', '', ['class' => 'clearfix']);
-            echo $form->field($survey, "survey_is_visible", ['template' => "<div class='survey-form-field submit-on-click'>{input}{label}</div>",]
-            )->checkbox(['class' => 'checkbox'], false);
-			if ($withUserSearch) {
-				echo Html::tag('div', '', ['class' => 'clearfix']);
-				echo $form->field($survey,
-					"survey_is_private",
-					['template' => "<div class='survey-form-field submit-on-click'>{input}{label}</div>",]
-				)->checkbox(['class' => 'checkbox danger'], false);
-			}
-            echo Html::endTag('div'); // col-md-3
+//            echo Html::beginTag('div', ['class' => 'col-md-3']);
+//
+//            echo $form->field($survey, "survey_is_closed", ['template' => "<div class='survey-form-field submit-on-click'>{input}{label}</div>",]
+//            )->checkbox(['class' => 'checkbox danger'], false);
+//
+//            echo Html::tag('div', '', ['class' => 'clearfix']);
+//            echo $form->field($survey, "survey_is_pinned", ['template' => "<div class='survey-form-field submit-on-click'>{input}{label}</div>",]
+//            )->checkbox(['class' => 'checkbox'], false);
+//
+//            echo Html::tag('div', '', ['class' => 'clearfix']);
+//
+//            echo $form->field($survey, "survey_is_visible", ['template' => "<div class='survey-form-field submit-on-click'>{input}{label}</div>",]
+//            )->checkbox(['class' => 'checkbox'], false);
+//			if ($withUserSearch) {
+//				echo Html::tag('div', '', ['class' => 'clearfix']);
+//				echo $form->field($survey,
+//					"survey_is_private",
+//					['template' => "<div class='survey-form-field submit-on-click'>{input}{label}</div>",]
+//				)->checkbox(['class' => 'checkbox danger'], false);
+//			}
+//            echo Html::endTag('div'); // col-md-3
 
-            echo Html::beginTag('div', ['class' => 'col-md-9']);
+            echo Html::beginTag('div', ['class' => 'col-md-12']);
             echo $form->field($survey, "survey_tags")->input('text', ['placeholder' => 'Comma separated']);
-			if ($withUserSearch) {
-				echo Html::tag('div', '', ['class' => 'clearfix']);
-				echo $form->field($survey, 'restrictedUserIds')->widget(Select2::classname(),
-					[
-						'initValueText' => $survey->restrictedUsernames, // set the initial display text
-						'options' => ['placeholder' => \Yii::t('survey', 'Restrict survey to selected user...')],
-						'pluginOptions' => [
-							'allowClear' => true,
-							'minimumInputLength' => 3,
-							'language' => [
-								'errorLoading' => new JsExpression("function () { return 'Waiting for results...'; }"),
-							],
-							'ajax' => [
-								'url' => Url::toRoute(['default/search-respondents-by-token']),
-								'dataType' => 'json',
-								'data' => new JsExpression('function(params) { return {token:params.term}; }')
-							],
-							'multiple' => true,
-							'escapeMarkup' => new JsExpression('function (markup) { return markup; }'),
-							'templateResult' => new JsExpression('function(city) { return city.text; }'),
-							'templateSelection' => new JsExpression('function (city) { return city.text; }'),
-						],
-						'pluginEvents' => [
-							'change' => new JsExpression('function() {         
-				                var container = $(this).closest(\'[data-pjax-container]\');
-		                        container.find(\'button[type=submit]\').click(); 
-		                    }')
-						]
-					]);
-			}
+//			if ($withUserSearch) {
+//				echo Html::tag('div', '', ['class' => 'clearfix']);
+//				echo $form->field($survey, 'restrictedUserIds')->widget(Select2::classname(),
+//					[
+//						'initValueText' => $survey->restrictedUsernames, // set the initial display text
+//						'options' => ['placeholder' => \Yii::t('survey', 'Restrict survey to selected user...')],
+//						'pluginOptions' => [
+//							'allowClear' => true,
+//							'minimumInputLength' => 3,
+//							'language' => [
+//								'errorLoading' => new JsExpression("function () { return 'Waiting for results...'; }"),
+//							],
+//							'ajax' => [
+//								'url' => Url::toRoute(['default/search-respondents-by-token']),
+//								'dataType' => 'json',
+//								'data' => new JsExpression('function(params) { return {token:params.term}; }')
+//							],
+//							'multiple' => true,
+//							'escapeMarkup' => new JsExpression('function (markup) { return markup; }'),
+//							'templateResult' => new JsExpression('function(city) { return city.text; }'),
+//							'templateSelection' => new JsExpression('function (city) { return city.text; }'),
+//						],
+//						'pluginEvents' => [
+//							'change' => new JsExpression('function() {
+//				                var container = $(this).closest(\'[data-pjax-container]\');
+//		                        container.find(\'button[type=submit]\').click();
+//		                    }')
+//						]
+//					]);
+//			}
             echo Html::endTag('div'); // col-md-9
             echo Html::endTag('div'); // row
 

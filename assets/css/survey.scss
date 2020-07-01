@@ -682,6 +682,12 @@ $questionHeader: #374141;
   .modal-content {
     background: rgba(255, 255, 255, 0.83);
 
+    .modal-header {
+      button {
+        margin-top: -8px;
+      }
+    }
+
     .modal-body {
       background: transparent;
 
