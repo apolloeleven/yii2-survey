@@ -28,15 +28,20 @@ BootstrapPluginAsset::register($this);
         <div class="row">
             <div class="col-sm-12">
                 <div class="survey-container">
+                    <div class="navigation-top" style="margin: 15px;">
+                        <a class="btn btn-primary" href="<?php echo Url::to(['default/view', 'id' => $survey->survey_id]); ?>">
+                            <?php echo Yii::t('survey', 'All Statistics'); ?>
+                        </a>
+                    </div>
                     <div id="survey-widget-title">
                         <h3><?php echo $survey->survey_name; ?> - <?php echo \Yii::$app->formatter->asDate($stat->survey_stat_ended_at); ?></h3>
                     </div>
 
                     <div id="survey-questions">
                         <?php
-                        var_dump($survey->questions[0]);
                         foreach ($survey->questions as $i => $question) {
                             echo $this->render('@surveyRoot/views/widget/question/_form', [
+                                'stat' => $stat,
                                 'question' => $question,
 	                            'number' => $i,
 	                            'readonly' => true

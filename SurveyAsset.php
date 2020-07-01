@@ -32,7 +32,8 @@ class SurveyAsset extends AssetBundle
     ];
     public $depends = [
         'yii\web\YiiAsset',
+        'yii\grid\GridViewAsset',
         'trntv\yii\datetime\assets\DateTimeAsset',
-        'yii\grid\GridViewAsset'
+        'kartik\slider\SliderAsset'
     ];
 }

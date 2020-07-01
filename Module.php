@@ -19,10 +19,14 @@ class Module extends \yii\base\Module
     public $controllerNamespace;
     public $userClass;
 
+    public $singleUserMode;
+    public $user;
+
     public $params = [
         'uploadsUrl' => null,
         'uploadsPath' => null,
         'singleUserMode' => false,
+        'username' => false,
     ];
 
     /**
@@ -58,15 +62,23 @@ class Module extends \yii\base\Module
             throw new InvalidConfigException("singleUserMode param must be a boolean");
         }
 
-//        if ($this->params['singleUserMode'] && !isset($this->params['surveyUserName'])) {
-//            throw new InvalidConfigException("You must must provide surveyUserName param when singleUserMode is set to true");
-//        }
-//
-//        if($this->params['singleUserMode'] && !is_string($this->params['surveyUserName'])) {
-//            throw new InvalidConfigException("surveyUserName param must be a string");
-//        }
+        if ($this->params['singleUserMode'] && !isset($this->params['username'])) {
+            throw new InvalidConfigException("You must must provide username param when singleUserMode is set to true");
+        }
+
+        if($this->params['singleUserMode'] && !is_string($this->params['username'])) {
+            throw new InvalidConfigException("username param must be a string");
+        }
+
+        $this->singleUserMode = $this->params['singleUserMode'];
 
         $this->userClass = \Yii::$app->user->identityClass;
+        if($this->singleUserMode && $this->params['username']) {
+            $this->user = $this->userClass::findByUsername($this->params['username']);
+            if(!$this->user) {
+                throw new InvalidConfigException("Survey User not found, check username param");
+            }
+        }
 
         \Yii::setAlias('@surveyRoot', __DIR__);
 

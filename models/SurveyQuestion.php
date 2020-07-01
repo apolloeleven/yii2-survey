@@ -3,6 +3,7 @@
 namespace onmotion\survey\models;
 
 
+use onmotion\survey\Module;
 use Yii;
 use yii\base\Exception;
 use yii\helpers\ArrayHelper;
@@ -93,7 +94,7 @@ class SurveyQuestion extends \yii\db\ActiveRecord
             [['survey_question_type'], 'filter', 'filter' => 'intval'],
             [['survey_question_can_skip', 'survey_question_show_descr', 'survey_question_is_scorable'], 'boolean'],
             [['survey_question_can_skip', 'survey_question_show_descr', 'survey_question_is_scorable'], 'filter', 'filter' => 'boolval'],
-            [['survey_question_name'], 'string', 'max' => 130],
+            [['survey_question_name'], 'string', 'max' => 255],
             [['survey_question_name'], 'required'],
             [['survey_question_survey_id'], 'exist', 'skipOnError' => true, 'targetClass' => Survey::class, 'targetAttribute' => ['survey_question_survey_id' => 'survey_id']],
             [['survey_question_type'], 'exist', 'skipOnError' => true, 'targetClass' => SurveyType::class, 'targetAttribute' => ['survey_question_type' => 'survey_type_id']],
@@ -167,13 +168,16 @@ class SurveyQuestion extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getUserAnswers()
+    public function getUserAnswers($uuid = null)
     {
-        return $this->hasMany(SurveyUserAnswer::class, ['survey_user_answer_question_id' => 'survey_question_id'])
+        $module = Module::getInstance();
+        $query = $this->hasMany(SurveyUserAnswer::class, ['survey_user_answer_question_id' => 'survey_question_id'])
             ->andOnCondition([
-                'survey_user_answer_user_id' => \Yii::$app->user->getId(),
-                'uuid' => \Yii::$app->session->get('SURVEY_UUID_' . $this->survey_question_survey_id)])
+                'survey_user_answer_user_id' => ($module && $module->singleUserMode) ? $module->user->id : \Yii::$app->user->getId(),
+                'uuid' => $uuid ? $uuid : \Yii::$app->session->get('SURVEY_UUID_' . $this->survey_question_survey_id)])
             ->indexBy('survey_user_answer_answer_id');
+
+        return $uuid ? $query->all() : $query;
     }
 
     /**

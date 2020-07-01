@@ -15,8 +15,9 @@ use yii\helpers\Url;
 /** @var $question \onmotion\survey\models\SurveyQuestion */
 /** @var $form \yii\widgets\ActiveForm */
 /** @var $readonly boolean */
+/** @var $stat surveyStat */
 
-$userAnswers = $question->userAnswers;
+$userAnswers = isset($stat) ? $question->getUserAnswers($stat->uuid) : $question->userAnswers;
 $userAnswer = !empty(current($userAnswers)) ? current($userAnswers) : (new SurveyUserAnswer()) ;
 
 echo $form->field($userAnswer, "[$question->survey_question_id]survey_user_answer_value")->textInput(

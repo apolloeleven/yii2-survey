@@ -14,8 +14,9 @@ use yii\helpers\Url;
 /** @var $question \onmotion\survey\models\SurveyQuestion */
 /** @var $form \yii\widgets\ActiveForm */
 /** @var $readonly boolean */
+/** @var $stat surveyStat */
 
-$userAnswers = $question->userAnswers;
+$userAnswers = isset($stat) ? $question->getUserAnswers($stat->uuid) : $question->userAnswers;
 
 $ddList = [];
 for ($i = 1, $answersCnt = count($question->answers); $i <= $answersCnt; ++$i){

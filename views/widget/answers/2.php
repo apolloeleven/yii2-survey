@@ -13,8 +13,9 @@ use yii\helpers\Html;
 /** @var $question \onmotion\survey\models\SurveyQuestion */
 /** @var $form \yii\widgets\ActiveForm */
 /** @var $readonly boolean */
+/** @var $stat surveyStat */
 
-$userAnswers = $question->userAnswers;
+$userAnswers = isset($stat) ? $question->getUserAnswers($stat->uuid) : $question->userAnswers;
 $userAnswer = !empty(current($userAnswers)) ? current($userAnswers) : (new SurveyUserAnswer());
 $radioList = [];
 

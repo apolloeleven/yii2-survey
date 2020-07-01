@@ -468,7 +468,7 @@
   margin-bottom: 50px;
 }
 #survey-title .survey-labels {
-  margin-right: 10px;
+  /*margin-right: 10px;*/
 }
 #survey-title .survey-labels .survey-label {
   background-color: #607d8b;

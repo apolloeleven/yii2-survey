@@ -40,12 +40,20 @@ BootstrapPluginAsset::register($this);
                         <a href="<?= Url::toRoute(['default/update/', 'id' => $survey->survey_id]) ?>"
                            class="btn btn-info btn-xs survey-label" data-pjax="0"
                            title="edit"><span class="glyphicon glyphicon-pencil"></span></a>
-                        <span class="survey-label btn btn-info btn-xs respondents-toggle" data-toggle="tooltip"
-                              title="<?= \Yii::t('survey', 'Respondents') ?>"><?= \Yii::t('survey', 'Number of respondents') ?>: <?= $survey->getRespondentsCount() ?></span>
+<!--                        <span class="survey-label btn btn-info btn-xs respondents-toggle"-->
+<!--                              data-toggle="tooltip"-->
+<!--                              title="--><?php //echo \Yii::t('survey', 'Respondents') ?><!--">-->
+<!--                            --><?php //echo \Yii::t('survey', 'Number of respondents') ?><!--:-->
+<!--                            --><?php //echo $survey->getRespondentsCount() ?>
+<!--                        </span>-->
                         <span class="survey-label btn btn-info btn-xs" data-toggle="tooltip"
                               title="<?= \Yii::t('survey', 'Questions') ?>"><?= \Yii::t('survey', 'Questions') ?>: <?= $survey->getQuestions()->count() ?></span>
-                        <span class="survey-label btn btn-info btn-xs restricted-users-toggle" data-toggle="tooltip"
-                              title="<?= \Yii::t('survey', 'Restricted users') ?>"><?= \Yii::t('survey', 'Restricted users') ?>: <?= $survey->getRestrictedUsersCount() ?></span>
+<!--                        <span class="survey-label btn btn-info btn-xs restricted-users-toggle"-->
+<!--                              data-toggle="tooltip"-->
+<!--                              title="--><?php //echo \Yii::t('survey', 'Restricted users') ?><!--">-->
+<!--                            --><?php //echo \Yii::t('survey', 'Restricted users') ?><!--:-->
+<!--                            --><?php //echo $survey->getRestrictedUsersCount() ?>
+<!--                        </span>-->
                     </div>
 
                 </div>
