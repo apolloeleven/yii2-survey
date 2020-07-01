@@ -2,6 +2,7 @@
 
 namespace onmotion\survey\models;
 
+use onmotion\survey\Module;
 use Yii;
 
 /**
@@ -70,7 +71,8 @@ class SurveyUserAnswer extends \yii\db\ActiveRecord
 
     public function beforeValidate()
     {
-        $stat = SurveyStat::getAssignedUserStat(\Yii::$app->user->getId(), $this->question->survey_question_survey_id);
+        $module = Module::getInstance();
+        $stat = SurveyStat::getAssignedUserStat(($module && $module->singleUserMode) ? $module->user->getId() : \Yii::$app->user->getId(), $this->question->survey_question_survey_id);
         if ($stat && $stat->survey_stat_is_done){
             return false;
         }

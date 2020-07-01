@@ -2,6 +2,7 @@
 
 namespace onmotion\survey\models;
 
+use onmotion\survey\Module;
 use Yii;
 use yii\db\conditions\AndCondition;
 use yii\db\conditions\OrCondition;
@@ -59,8 +60,9 @@ class Survey extends \yii\db\ActiveRecord
 
     public function beforeSave($insert)
     {
+        $module = Module::getInstance();
         if ($insert) {
-            $this->survey_created_by = \Yii::$app->user->getId();
+            $this->survey_created_by = ($module && $module->singleUserMode) ? $module->user->getId() : \Yii::$app->user->getId();
         }
         return parent::beforeSave($insert);
     }
@@ -171,6 +173,7 @@ class Survey extends \yii\db\ActiveRecord
 
     static function getDropdownList()
     {
+        $module = Module::getInstance();
         return ArrayHelper::map(self::find()
 	        ->leftJoin('survey_restricted_user', 'survey_id = survey_restricted_user_survey_id')
             ->where(new AndCondition([
@@ -181,7 +184,7 @@ class Survey extends \yii\db\ActiveRecord
 	            ]),
 	            new OrCondition([
 	            	['survey_is_private' => 0],
-		            ['survey_restricted_user_user_id' => \Yii::$app->user->id]
+		            ['survey_restricted_user_user_id' => ($module && $module->singleUserMode) ? $module->user->getId() : \Yii::$app->user->getId(),]
 	            ])
             ]))
             ->orderBy(['survey_created_at' => SORT_ASC])
@@ -255,6 +258,7 @@ class Survey extends \yii\db\ActiveRecord
     }
 
     public function getIsAccessibleByCurrentUser() {
-    	return $this->isAccessibleBy(\Yii::$app->user->id);
+        $module = Module::getInstance();
+    	return $this->isAccessibleBy(($module && $module->singleUserMode) ? $module->user->getId() : \Yii::$app->user->getId());
     }
 }

@@ -173,7 +173,7 @@ class SurveyQuestion extends \yii\db\ActiveRecord
         $module = Module::getInstance();
         $query = $this->hasMany(SurveyUserAnswer::class, ['survey_user_answer_question_id' => 'survey_question_id'])
             ->andOnCondition([
-                'survey_user_answer_user_id' => ($module && $module->singleUserMode) ? $module->user->id : \Yii::$app->user->getId(),
+                'survey_user_answer_user_id' => ($module && $module->singleUserMode) ? $module->user->getId() : \Yii::$app->user->getId(),
                 'uuid' => $uuid ? $uuid : \Yii::$app->session->get('SURVEY_UUID_' . $this->survey_question_survey_id)])
             ->indexBy('survey_user_answer_answer_id');
 
